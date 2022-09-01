@@ -1,8 +1,46 @@
 <?php
+    $JSONFile = file_get_contents("bdd.json");
+    $JSONdata = json_decode($JSONFile, true);
+
     function SessionHandle(){
-        // TODO: Check for existing users
         $email = htmlspecialchars($_POST["email"], ENT_QUOTES, 'UTF-8');
-        $pseudo =htmlspecialchars($_POST["pseudo"], ENT_QUOTES, 'UTF-8');
+        $pseudo = htmlspecialchars($_POST["pseudo"], ENT_QUOTES, 'UTF-8');
+
+        CheckUser($email, $pseudo);
+    }
+
+    function CheckUser(string $email, string $pseudo){
+        global $JSONdata, $JSONFile;
+
+        $users = $JSONdata['USERS'];
+
+        foreach ($users as $key => $value) {
+            $candidatePseudo = $value['pseudo'];
+            $candidateEmail = $value['email'];
+
+            if(
+                $email == $candidateEmail &&
+                $pseudo == $candidatePseudo
+            ){
+                $_SESSION['userID'] = $key;
+                return true;
+            }else { AddUser($email, $pseudo); }
+        }
+
+        return false;
+    }
+
+    function AddUser(string $email, string $pseudo){
+        global $JSONdata, $JSONFile;
+
+        $JSONdata['USERS'][strval(count($JSONdata['USERS']) + 1)] = [
+            'pseudo' => $pseudo,
+            'email' => $email
+        ];
+        
+        $_SESSION['userID'] = strval(count($JSONdata['USERS']));
+        $encoded = json_encode($JSONdata);
+        file_put_contents('bdd.json', $encoded);
     }
 
 ?><!DOCTYPE html>
@@ -21,6 +59,7 @@
 
         if(isset($_SESSION)){
             if(isset($_POST) && !empty($_POST)){
+                SessionHandle();
                 include('chat.php');
             }
             else{

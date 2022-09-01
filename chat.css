@@ -53,6 +53,11 @@ div#userBox{
 /* #endregion */
 
 /* #region Chatbox */
+div#messageScroll{
+    min-height: 60vh;
+    max-height: 60vh;
+    overflow-y: scroll;
+}
 div#messageBox{
     margin-top: 20px;
     margin-left: 20px;
@@ -86,5 +91,16 @@ p#messageTime{
 li#messageEl{
     display: flex;
     flex-direction: row;
+}
+
+/* user input */
+form#inputBox{
+    background-color: black;
+    color: whitesmoke;
+}
+input#chatInput{
+    background-color: black;
+    color:lightgray;
+    margin-left: 50px;
 }
 /* #endregion */

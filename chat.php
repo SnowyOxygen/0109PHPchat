@@ -1,33 +1,37 @@
 <?php
+    $JSONFile = file_get_contents("bdd.json");
+    $JSONdata = json_decode($JSONFile, true);
+
     $userList = [
-        // "ID (int)" => [
-        //     "pseudo" => "johnDoe (text)";
-        //     "email" => "email@hallo.com (text)"
-        // ]
-        1 => [
-            "pseudo" => "johnDoe",
-            "email" => "email@hallo.com"
-        ],
-        2 => [
-            "pseudo" => "foobar",
-            "email" => "wat@quoi.com"
-        ],
-        3 => [
-            "pseudo" => "jesus",
-            "email" => "christ@google.com"
-        ],
-        4 => [
-            "pseudo" => "macdonald",
-            "email" => "burg@er.com"
-        ]
+        // 1 => [
+        //     "pseudo" => "johnDoe",
+        //     "email" => "email@hallo.com"
+        // ],
     ];
-    $messageList = [
-        1 => [
-            "content" => "This method uses JavaScript to execute a PHP function with onclick() event.",
-            "time" => "11:46 - 01/09/2022",
-            "user" => 1
-        ]
-    ];
+    $messageList = [];
+
+    if(isset($_POST) && array_key_exists('chatInput', $_POST)){
+        $newMessage = htmlspecialchars($_POST["chatInput"], ENT_QUOTES, 'UTF-8');
+        WriteMessage($newMessage);
+    }
+
+    function GetUsers(){
+        $userList = $JSONdata['USERS'];
+    }
+
+    function GetMessages(){
+        $messageList = $JSONdata['MESSAGES'];
+    }
+
+    function WriteMessage($message){
+        global $JSONdata;
+
+        $JSONdata['MESSAGES'][ (count($messageList) + 1)] = [
+                'content' => $message,
+                'dateTime' => date("Y-m-d", time()),
+                'userID' => $_SESSION['userID']
+        ];
+    }
 ?>
 <link rel="stylesheet" href="./chat.css">
 <div id="content">
@@ -36,6 +40,7 @@
         <ul id="userList">
             <!-- liste d'utilisateurs existants / en ligne -->
             <?php
+                $userList = $JSONdata['USERS'];
                 if(count($userList) > 0){
                     foreach ($userList as $key => $value) {
                         echo '<li id="userEl">' . $value['pseudo'] . '</li>';
@@ -46,34 +51,32 @@
     </div>
 
     <div id="messageBox">
-        <ul id="messageList">
-            <!-- Liste des messages envoyés -->
-
-            <!-- Examples -->
-            <li id="messageEl">
-                <p id="messageUser" class="online">User 2</p>
-                <p id="messageContent">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tenetur minus voluptate quo fugit officia deserunt sapiente, enim quasi, magni ratione ea accusantium, aspernatur vel expedita dicta nam voluptatum quibusdam veritatis.</p>
-                <p id="messageTime">11 : 03</p>
-            </li>
-            <li id="messageEl">
-                <p id="messageUser" class="offline">User 1</p>
-                <p id="messageContent">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tenetur minus voluptate quo fugit officia deserunt sapiente, enim quasi, magni ratione ea accusantium, aspernatur vel expedita dicta nam voluptatum quibusdam veritatis.</p>
-                <p id="messageTime">11 : 05</p>
-            </li>
-            <?php
-                if(count($messageList) > 0){
-                    foreach ($messageList as $key => $value) {
-                        echo '
-                        <li id="messageEl">
-                            <p id="messageUser" class="offline">' . $userList[$value['user']]['pseudo'] . '</p>
-                            <p id="messageContent">' . $value['content'] . '</p>
-                            <p id="messageTime">'. $value['time'] . '</p>
-                        </li>
-                        ';
+        
+        <div id="messageScroll">
+            <ul id="messageList">
+                <!-- Liste des messages envoyés -->
+                <?php
+                    $messageList = $JSONdata['MESSAGES'];
+                    if(count($messageList) > 0){
+                        foreach ($messageList as $key => $value) {
+                            echo '
+                            <li id="messageEl">
+                                <p id="messageUser" class="offline">' . $userList[$value['userID']]['pseudo'] . '</p>
+                                <p id="messageContent">' . $value['content'] . '</p>
+                                <p id="messageTime">'. $value['time'] . '</p>
+                            </li>
+                            ';
+                        }
                     }
-                }
-            ?>
-        </ul>
+                ?>
+                
+            </ul>
+        </div>
+
+        <form action="" method="post" id="inputBox">
+            <input type="text" id="chatInput" name="chatInput" required maxlength="300" placeholder="Your text here">
+            <input type="submit" name="submit" id="submit">
+        </form>
     </div>
 
 </div>
