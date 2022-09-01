@@ -1,0 +1,90 @@
+/* #region Header */
+body,html{
+    color: whitesmoke;
+    background-color: black;
+    font-family: monospace;
+}
+header{
+    border-bottom: 2px solid whitesmoke;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+}
+h1{
+    font-size: 2em;
+    text-decoration: underline;
+    font-weight: 700;
+    margin-right: 40px;
+}
+p#selfPseudo{
+    color: green;
+    font-style: italic;
+    font-size: 1.2em;
+    font-weight: 700;
+    align-self: center;
+}
+button#deconnexion{
+    font-size: 1.2em;
+    margin-left: 3em !important;
+    height: 30px !important;
+    align-self: center !important;
+}
+/* #endregion */
+
+/* #region Connection */
+form#connexion{
+    width: 15em;
+    display: flex;
+    flex-direction: column;
+}
+input{
+    font-size: 1.1em;
+    font-weight: 600;
+    border-radius: 2px;
+
+    margin: 10px;
+}
+/* #endregion */
+
+/* #region User List */
+div#userBox{
+    margin-right: 20px;
+}
+/* #endregion */
+
+/* #region Chatbox */
+div#messageBox{
+    margin-top: 20px;
+    margin-left: 20px;
+    border-left: 2px solid whitesmoke;
+    
+}
+div#content{
+    display: flex;
+    flex-direction: row;
+}
+p#messageContent{
+    width: 50vh;
+}
+p#messageContent, p#messageUser, p#messageTime{
+    margin-left: 10px;
+    margin-right: 10px;
+}
+p#messageUser{
+    font-weight: 600;
+    text-decoration: underline;
+}
+p#messageTime{
+    font-style: italic;
+}
+.online{
+    color: green;
+}
+.offline{
+    color: gray;
+}
+li#messageEl{
+    display: flex;
+    flex-direction: row;
+}
+/* #endregion */
