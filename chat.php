@@ -2,6 +2,8 @@
     $JSONFile = file_get_contents("bdd.json");
     $JSONdata = json_decode($JSONFile, true);
 
+    GetData();
+
     $userList = [
         // 1 => [
         //     "pseudo" => "johnDoe",
@@ -10,27 +12,30 @@
     ];
     $messageList = [];
 
+    //Check if user wrote a message
     if(isset($_POST) && array_key_exists('chatInput', $_POST)){
         $newMessage = htmlspecialchars($_POST["chatInput"], ENT_QUOTES, 'UTF-8');
         WriteMessage($newMessage);
     }
 
-    function GetUsers(){
+    //Update arrays
+    function GetData(){
+        global $messageList, $userList, $JSONdata;
+        $messageList = $JSONdata['MESSAGES'];
         $userList = $JSONdata['USERS'];
     }
 
-    function GetMessages(){
-        $messageList = $JSONdata['MESSAGES'];
-    }
-
+    //Save message to bdd.json
     function WriteMessage($message){
-        global $JSONdata;
+        global $JSONdata, $messageList;
 
-        $JSONdata['MESSAGES'][ (count($messageList) + 1)] = [
+        $JSONdata['MESSAGES'][strval(count($JSONdata['MESSAGES']) + 1)] = [
                 'content' => $message,
                 'dateTime' => date("Y-m-d", time()),
                 'userID' => $_SESSION['userID']
         ];
+        $encoded = json_encode($JSONdata);
+        file_put_contents('bdd.json', $encoded);
     }
 ?>
 <link rel="stylesheet" href="./chat.css">
@@ -39,6 +44,7 @@
 
         <ul id="userList">
             <!-- liste d'utilisateurs existants / en ligne -->
+            <!-- TODO: Bug de duplication des comptes -->
             <?php
                 $userList = $JSONdata['USERS'];
                 if(count($userList) > 0){
@@ -55,6 +61,7 @@
         <div id="messageScroll">
             <ul id="messageList">
                 <!-- Liste des messages envoyés -->
+                <!-- TODO: check bdd.json and client data -->
                 <?php
                     $messageList = $JSONdata['MESSAGES'];
                     if(count($messageList) > 0){
@@ -63,7 +70,7 @@
                             <li id="messageEl">
                                 <p id="messageUser" class="offline">' . $userList[$value['userID']]['pseudo'] . '</p>
                                 <p id="messageContent">' . $value['content'] . '</p>
-                                <p id="messageTime">'. $value['time'] . '</p>
+                                <p id="messageTime">'. $value['dateTime'] . '</p>
                             </li>
                             ';
                         }
